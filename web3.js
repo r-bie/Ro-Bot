@@ -204,7 +204,7 @@ async function getCBSData(nftID, chain) {
     return container;
 }
 
-async function getNewListing(currBlockNumber, chain) {
+async function getNewListing(currBlockNumber, chain, client) {
     // declaring web3 environment
     const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
 
@@ -267,7 +267,7 @@ async function getNewListing(currBlockNumber, chain) {
     });
 }
 
-async function getListingPriceChange(currBlockNumber, chain) {
+async function getListingPriceChange(currBlockNumber, chain, client) {
     // declaring web3 environment
     const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
 
@@ -330,7 +330,7 @@ async function getListingPriceChange(currBlockNumber, chain) {
     });
 }
 
-async function getPurchasedListing(currBlockNumber, chain) {
+async function getPurchasedListing(currBlockNumber, chain, client) {
     // declaring web3 environment
     const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
 
@@ -391,7 +391,7 @@ async function getPurchasedListing(currBlockNumber, chain) {
     });
 }
 
-async function getCancelledListing(currBlockNumber, chain) {
+async function getCancelledListing(currBlockNumber, chain, client) {
     // declaring web3 environment
     const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
 
@@ -446,7 +446,7 @@ async function getCancelledListing(currBlockNumber, chain) {
     });
 }
 
-async function getAllPartner(chain) {
+async function getAllPartner(chain, client) {
     // declaring web3 environment
     const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
 

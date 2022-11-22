@@ -18,13 +18,12 @@ module.exports = {
             if (numberChecker) {
                 try {
                     console.log(`[logdata]Trying to fetch data..`);
-                    await w3func.getNewListing(blockNumber, chain);
-                    await w3func.getListingPriceChange(blockNumber, chain);
-                    await w3func.getPurchasedListing(blockNumber, chain);
-                    await w3func.getCancelledListing(blockNumber, chain);
+                    await w3func.getNewListing(blockNumber, chain, client);
+                    await w3func.getListingPriceChange(blockNumber, chain, client);
+                    await w3func.getPurchasedListing(blockNumber, chain, client);
+                    await w3func.getCancelledListing(blockNumber, chain, client);
                 } catch (error) {
-                    console.log(`[logdata]Error in fetching data. Might be a RPC limit error.`)
-                    console.log(error);
+                    console.log(`[logdata]Error \n${error}`);
                 }
             }
         }
