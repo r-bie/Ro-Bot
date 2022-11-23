@@ -360,7 +360,7 @@ async function getPurchasedListing(currBlockNumber, chain, client) {
             var container = await getCBWData(arrayResponse[i].returnValues.nftID, chain);
             bazaarString = `🔽 Sold		-  [**SKILL: ${y}**  |  ${container}]`;
 
-            client.channels.fetch(contractAddress[chain].shieldTrades)
+            client.channels.fetch(contractAddress[chain].weapTrades)
                 .then(channel => {
                     channel.send(bazaarString);
                 });

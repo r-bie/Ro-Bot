@@ -53,7 +53,7 @@ module.exports = {
         })
         // console log for slash command author
         author = interaction.user.id;
-        console.log(`User ${author} used /ping command!`);
+        console.log(`User ${author} used /check command!`);
         // collected parameters from slash command
         var nftType = interaction.options.getSubcommand();
         var chain = interaction.options.getString('chain');
