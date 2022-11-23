@@ -353,8 +353,6 @@ async function getPurchasedListing(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
-            const channel = await client.channels.fetch(contractAddress[chain].shieldTrades);
-            channel.send({ content: bazaarString });
         } else if (x === "Weapon") { // fetch all required data for CBw
             var y = parseFloat(arrayResponse[i].returnValues.price * 0.000000000000000001).toFixed(3)
             var container = await getCBWData(arrayResponse[i].returnValues.nftID, chain);
