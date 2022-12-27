@@ -10,7 +10,6 @@ module.exports = {
             fetchReply: true
         });
 
-        // logging into dyno-logs text channel
         var author = interaction.user.id;
         console.log(`${author} used watch command.`);
         

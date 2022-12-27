@@ -5,10 +5,12 @@ const shieldABI = require('./abis/shield.json');
 const bazaarABI = require('./abis/bazaar.json');
 const charsABI = require('./abis/character.json');
 const treasuryABI = require('./abis/treasury.json');
+const skillABI = require('./abis/skillToken.json');
 const USER_ADDRESS = "0xA8e48AfbD74f58d16290A5253571430665A3f78c";
 
 var contractAddress = {
     bnb: {
+        skillToken: '0x154A9F9cbd3449AD22FDaE23044319D6eF2a1Fab',
         character: '0xc6f252c2CdD4087e30608A35c022ce490B58179b',
         weapon: '0x7E091b0a220356B157131c831258A9C98aC8031A',
         shield: '0xf9E9F6019631bBE7db1B71Ec4262778eb6C3c520',
@@ -18,7 +20,8 @@ var contractAddress = {
         // discord text channels
         charTrades: '1021850931656134686',
         weapTrades: '1026428691561070653',
-        shieldTrades: '1026428828945481758'
+        shieldTrades: '1026428828945481758',
+        rpTextChannel: '1050565824987013120'
     },
     oec: {
         character: '0x6A1d1803d4EDF5CF27EDb64ae95A22F81707eA38',
@@ -55,6 +58,8 @@ var nodes = {
     heco: 'https://http-mainnet.hecochain.com',
     skale: 'https://mainnet.skalenodes.com/v1/affectionate-immediate-pollux'
 }
+
+var ogRoleId = '1045457186047922247';
 
 function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
 
@@ -444,6 +449,35 @@ async function getCancelledListing(currBlockNumber, chain, client) {
     });
 }
 
+async function getRewardsPoolBalance(chain, client) {
+    // declaring web3 environment
+    const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
+    const contract = new web3.eth.Contract(skillABI, contractAddress[chain].skillToken);
+
+    while (true) {
+        const balanceOf = await contract.methods.balanceOf(contractAddress[chain].treasury).call({ from: USER_ADDRESS });
+        balanceInEther = parseFloat(balanceOf * 0.000000000000000001).toFixed(4);
+
+        if (balanceInEther > 100) {
+            client.channels.fetch(contractAddress[chain].rpTextChannel)
+                .then(channel => {
+                    channel.send(`<@&${ogRoleId}> Amount in rewards pool : ${balanceInEther} SKILL`);
+                });
+            console.log(`Amount in rewards pool : ${balanceInEther}`);
+            break;
+        }
+    }
+}
+
+async function getBalanceOf(chain, address) {
+    // declaring web3 environment
+    const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
+    const contract = new web3.eth.Contract(skillABI, contractAddress[chain].skillToken);
+    const balanceOf = await contract.methods.balanceOf(address).call({ from: USER_ADDRESS });
+    balanceInEther = parseFloat(balanceOf * 0.000000000000000001).toFixed(4);
+    return balanceInEther;
+}
+
 async function getAllPartner(chain, client) {
     // declaring web3 environment
     const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
@@ -495,4 +529,4 @@ async function getAllPartner(chain, client) {
     }
 }
 
-module.exports = { isNumber, getCBCData, getCBWData, getCBSData, getNewListing, getListingPriceChange, getPurchasedListing, getCancelledListing, getAllPartner }
+module.exports = { isNumber, getCBCData, getCBWData, getCBSData, getNewListing, getListingPriceChange, getPurchasedListing, getCancelledListing, getRewardsPoolBalance, getBalanceOf, getAllPartner }
