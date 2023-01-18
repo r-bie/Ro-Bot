@@ -51,24 +51,28 @@ module.exports = {
         const message = await interaction.deferReply({
             fetchReply: true
         })
+        
         // console log for slash command author
         author = interaction.user.id;
-        console.log(`User ${author} used /check command!`);
+        console.log(`[logdata]User ${author} used /check command!`);
+
         // collected parameters from slash command
         var nftType = interaction.options.getSubcommand();
         var chain = interaction.options.getString('chain');
         var nftID = interaction.options.getString('nft');
+
         // console log for command data
-        console.log(`Command: check ${nftType}  |  Params: { ${chain} , ${nftID} }`);
+        console.log(`[logdata]Command: check ${nftType}  |  Params: { ${chain} , ${nftID} }`);
+
         //switch case to filter data types
         switch (nftType) {
             case 'character':
                 try {
                     container = await w3func.getCBCData(nftID, chain); // fetch CBC data from the blockchain
-                    console.log(`Result: ${container}`); // console log for getCBCData function return
+                    console.log(`[logdata]Result: ${container}`); // console log for getCBCData function return
                 } catch (error) {
                     container = `Something went wrong.. Error in fetching data.`; // catch when there is no NFT under CBC with the matching NFT ID
-                    console.log(`Result: Error \n${error}`);
+                    console.log(`[logdata]Result: Error \n${error}`);
                 }
 
                 var newMessage = `${container}`; 
@@ -79,10 +83,10 @@ module.exports = {
             case 'weapon':
                 try {
                     container = await w3func.getCBWData(nftID, chain);
-                    console.log(`Result: ${container}`);
+                    console.log(`[logdata]Result: ${container}`);
                 } catch (error) {
                     container = `Something went wrong.. Error in fetching data.`;
-                    console.log(`Result: Error \n${error}`);
+                    console.log(`[logdata]Result: Error \n${error}`);
                 }
 
                 var newMessage = `${container}`;
@@ -93,10 +97,10 @@ module.exports = {
             case 'shield':
                 try {
                     container = await w3func.getCBSData(nftID, chain);
-                    console.log(`Result: ${container}`);
+                    console.log(`[logdata]Result: ${container}`);
                 } catch (error) {
                     container = `Something went wrong.. Error in fetching data.`;
-                    console.log(`Result: Error \n${error}`);
+                    console.log(`[logdata]Result: Error \n${error}`);
                 }
 
                 var newMessage = `${container}`;
@@ -106,7 +110,7 @@ module.exports = {
                 break;
             default:
                 const newMesage = `Can't find the NFT...`;
-                console.log(`Can't find the NFT`);
+                console.log(`[logdata]Can't find the NFT`);
                 await interaction.editReply({
                     content: newMessage
                 });

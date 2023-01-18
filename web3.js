@@ -1,5 +1,8 @@
 const Web3 = require('web3');
 
+const mongoose = require('mongoose');
+const Sales = require('./schemas/sales');
+
 const weapABI = require('./abis/weapon.json');
 const shieldABI = require('./abis/shield.json');
 const bazaarABI = require('./abis/bazaar.json');
@@ -222,7 +225,7 @@ async function getNewListing(currBlockNumber, chain, client) {
     console.log(`[logdata][getNewListing]${arrayResponse.length}`); // logs array length
 
     for (let i = 0; i < arrayLength; i++) { // send bazaar data to discord #bsc text channel
-        var x = getNftType(arrayResponse[i].returnValues.nftAddress, chain) // initialize nft type for [if statements]
+        var x = getNftType(arrayResponse[i].returnValues.nftAddress, chain) // nft type for [if statements]
         const getFinalPrice = await contract.methods.getFinalPrice(arrayResponse[i].returnValues.nftAddress, arrayResponse[i].returnValues.nftID).call({ from: USER_ADDRESS });
         if (x === "Character") { // fetch all required data for CBC
             var y = parseFloat(getFinalPrice * 0.000000000000000001).toFixed(3);
@@ -234,6 +237,30 @@ async function getNewListing(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // saving into the database
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+            if (!salesProfile) {
+                salesProfile = await new Sales({
+                    _id: mongoose.Types.ObjectId(),
+                    blockchain: chain,
+                    blockNumber: currBlockNumber,
+                    nftID: arrayResponse[i].returnValues.nftID,
+                    nftType: x,
+                    salesType: 'List',
+                    salesPrice: y,
+                });
+
+                await salesProfile.save().catch(console.error);
+                console.log(salesProfile);
+                console.log("[logdata][MongoDB]New Listing saved. ✅");
+            } else {
+                console.log("[logdata][MongoDB]Duplicate item. Saving failed. 🛑");
+            }
+
         } else if (x === "Weapon") { // fetch all required data for CBw
             var y = parseFloat(getFinalPrice * 0.000000000000000001).toFixed(3);
             var link = `https://bazaar.market/buy/cb-${x.toLowerCase()}?id=${arrayResponse[i].returnValues.nftID}`;
@@ -244,6 +271,31 @@ async function getNewListing(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // saving into the database
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+
+            if (!salesProfile) {
+                salesProfile = await new Sales({
+                    _id: mongoose.Types.ObjectId(),
+                    blockchain: chain,
+                    blockNumber: currBlockNumber,
+                    nftID: arrayResponse[i].returnValues.nftID,
+                    nftType: x,
+                    salesType: 'List',
+                    salesPrice: y,
+                });
+
+                await salesProfile.save().catch(console.error);
+                console.log(salesProfile);
+                console.log("[logdata][MongoDB]New Listing saved. ✅");
+            } else {
+                console.log("[logdata][MongoDB]Duplicate item. Saving failed. 🛑");
+            }
+
         } else if (x === "Shield") { // fetch all required data for CBS
             var y = parseFloat(getFinalPrice * 0.000000000000000001).toFixed(3);
             var link = `https://bazaar.market/buy/cb-${x.toLowerCase()}?id=${arrayResponse[i].returnValues.nftID}`;
@@ -254,6 +306,31 @@ async function getNewListing(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // saving into the database
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+
+            if (!salesProfile) {
+                salesProfile = await new Sales({
+                    _id: mongoose.Types.ObjectId(),
+                    blockchain: chain,
+                    blockNumber: currBlockNumber,
+                    nftID: arrayResponse[i].returnValues.nftID,
+                    nftType: x,
+                    salesType: 'List',
+                    salesPrice: y,
+                });
+
+                await salesProfile.save().catch(console.error);
+                console.log(salesProfile);
+                console.log("[logdata][MongoDB]New Listing saved. ✅");
+            } else {
+                console.log("[logdata][MongoDB]Duplicate item. Saving failed. 🛑");
+            }
+
         } else {
             console.log("[logdata]NFT Type not supported.")
         }
@@ -297,6 +374,36 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // update an item
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+
+            if (!salesProfile) {
+                salesProfile = await new Sales({
+                    _id: mongoose.Types.ObjectId(),
+                    blockchain: chain,
+                    blockNumber: currBlockNumber,
+                    nftID: arrayResponse[i].returnValues.nftID,
+                    nftType: x,
+                    salesType: 'List',
+                    salesPrice: y,
+                });
+
+                await salesProfile.save().catch(console.error);
+                console.log(salesProfile);
+                console.log("[logdata][MongoDB]No prior records found. Saved as new. ✅");
+            } else {
+                await Sales.updateOne({
+                    blockchain: chain,
+                    nftID: arrayResponse[i].returnValues.nftID},
+                    {$set:
+                        { salesPrice: y }
+                });
+                console.log(`[logdata][MongoDB]Updated the price for [${x}, ${arrayResponse[i].returnValues.nftID}] to ${y}. ✅`);
+            }
         } else if (x === "Weapon") { // fetch all required data for CBw
             var y = parseFloat(getFinalPrice * 0.000000000000000001).toFixed(3);
             var link = `https://bazaar.market/buy/cb-${x.toLowerCase()}?id=${arrayResponse[i].returnValues.nftID}`;
@@ -307,6 +414,36 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // update an item
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+
+            if (!salesProfile) {
+                salesProfile = await new Sales({
+                    _id: mongoose.Types.ObjectId(),
+                    blockchain: chain,
+                    blockNumber: currBlockNumber,
+                    nftID: arrayResponse[i].returnValues.nftID,
+                    nftType: x,
+                    salesType: 'List',
+                    salesPrice: y,
+                });
+
+                await salesProfile.save().catch(console.error);
+                console.log(salesProfile);
+                console.log("[logdata][MongoDB]No prior records found. Saved as new. ✅");
+            } else {
+                await Sales.updateOne({
+                    blockchain: chain,
+                    nftID: arrayResponse[i].returnValues.nftID},
+                    {$set:
+                        { salesPrice: y }
+                });
+                console.log(`[logdata][MongoDB]Updated the price for [${x}, ${arrayResponse[i].returnValues.nftID}] to ${y}. ✅`);
+            }
         } else if (x === "Shield") { // fetch all required data for CBS
             var y = parseFloat(getFinalPrice * 0.000000000000000001).toFixed(3);
             var link = `https://bazaar.market/buy/cb-${x.toLowerCase()}?id=${arrayResponse[i].returnValues.nftID}`;
@@ -317,6 +454,36 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // update an item
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+
+            if (!salesProfile) {
+                salesProfile = await new Sales({
+                    _id: mongoose.Types.ObjectId(),
+                    blockchain: chain,
+                    blockNumber: currBlockNumber,
+                    nftID: arrayResponse[i].returnValues.nftID,
+                    nftType: x,
+                    salesType: 'List',
+                    salesPrice: y,
+                });
+
+                await salesProfile.save().catch(console.error);
+                console.log(salesProfile);
+                console.log("[logdata][MongoDB]No prior records found. Saved as new. ✅");
+            } else {
+                await Sales.updateOne({
+                    blockchain: chain,
+                    nftID: arrayResponse[i].returnValues.nftID},
+                    {$set:
+                        { salesPrice: y }
+                });
+                console.log(`[logdata][MongoDB]Updated the price for [${x}, ${arrayResponse[i].returnValues.nftID}] to ${y}. ✅`);
+            }
         } else {
             console.log("[logdata]NFT Type not supported.")
         }
@@ -358,6 +525,22 @@ async function getPurchasedListing(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // remove an item from the database
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+
+            if (!salesProfile) {
+                console.log("[logdata][MongoDB]No records found.");
+            } else {
+                await Sales.deleteOne({
+                    blockchain: chain,
+                    nftID: arrayResponse[i].returnValues.nftID
+                });
+                console.log(`[logdata][MongoDB]Removed item [${x}, ${arrayResponse[i].returnValues.nftID}] from ${chain} chain.`);
+            }
         } else if (x === "Weapon") { // fetch all required data for CBw
             var y = parseFloat(arrayResponse[i].returnValues.price * 0.000000000000000001).toFixed(3)
             var container = await getCBWData(arrayResponse[i].returnValues.nftID, chain);
@@ -367,6 +550,22 @@ async function getPurchasedListing(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // remove an item from the database
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+
+            if (!salesProfile) {
+                console.log("[logdata][MongoDB]No records found.");
+            } else {
+                await Sales.deleteOne({
+                    blockchain: chain,
+                    nftID: arrayResponse[i].returnValues.nftID
+                });
+                console.log(`[logdata][MongoDB]Removed item [${x}, ${arrayResponse[i].returnValues.nftID}] from ${chain} chain.`);
+            }
         } else if (x === "Shield") { // fetch all required data for CBS
             var y = parseFloat(arrayResponse[i].returnValues.price * 0.000000000000000001).toFixed(3)
             var container = await getCBSData(arrayResponse[i].returnValues.nftID, chain);
@@ -376,6 +575,22 @@ async function getPurchasedListing(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // remove an item from the database
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+
+            if (!salesProfile) {
+                console.log("[logdata][MongoDB]No records found.");
+            } else {
+                await Sales.deleteOne({
+                    blockchain: chain,
+                    nftID: arrayResponse[i].returnValues.nftID
+                });
+                console.log(`[logdata][MongoDB]Removed item [${x}, ${arrayResponse[i].returnValues.nftID}] from ${chain} chain.`);
+            }
         } else {
             console.log("[logdata]NFT Type not supported.");
         }
@@ -416,6 +631,22 @@ async function getCancelledListing(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // remove an item from the database
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+
+            if (!salesProfile) {
+                console.log("[logdata][MongoDB]No records found.");
+            } else {
+                await Sales.deleteOne({
+                    blockchain: chain,
+                    nftID: arrayResponse[i].returnValues.nftID
+                });
+                console.log(`[logdata][MongoDB]Removed item [${x}, ${arrayResponse[i].returnValues.nftID}] from ${chain} chain.`);
+            }
         } else if (x === "Weapon") { // fetch all required data for CBw
             var container = await getCBWData(arrayResponse[i].returnValues.nftID, chain);
             bazaarString = `🛑 Cancel	-  [${x}  |  ${container}]`;
@@ -424,6 +655,22 @@ async function getCancelledListing(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // remove an item from the database
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+
+            if (!salesProfile) {
+                console.log("[logdata][MongoDB]No records found.");
+            } else {
+                await Sales.deleteOne({
+                    blockchain: chain,
+                    nftID: arrayResponse[i].returnValues.nftID
+                });
+                console.log(`[logdata][MongoDB]Removed item [${x}, ${arrayResponse[i].returnValues.nftID}] from ${chain} chain.`);
+            }
         } else if (x === "Shield") { // fetch all required data for CBS
             var container = await getCBSData(arrayResponse[i].returnValues.nftID, chain);
             bazaarString = `🛑 Cancel	-  [${x}  |  ${container}]`;
@@ -432,6 +679,22 @@ async function getCancelledListing(currBlockNumber, chain, client) {
                 .then(channel => {
                     channel.send(bazaarString);
                 });
+
+            // remove an item from the database
+            let salesProfile = await Sales.findOne({
+                blockchain: chain,
+                nftID: arrayResponse[i].returnValues.nftID
+            });
+
+            if (!salesProfile) {
+                console.log("[logdata][MongoDB]No records found.");
+            } else {
+                await Sales.deleteOne({
+                    blockchain: chain,
+                    nftID: arrayResponse[i].returnValues.nftID
+                });
+                console.log(`[logdata][MongoDB]Removed item [${x}, ${arrayResponse[i].returnValues.nftID}] from ${chain} chain.`);
+            }
         } else {
             console.log("[logdata]NFT Type not supported.")
         }

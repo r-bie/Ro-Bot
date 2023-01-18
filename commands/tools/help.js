@@ -7,8 +7,12 @@ module.exports = {
     async execute(interaction, client) {
         const message = await interaction.deferReply({
             fetchReply: true
-        })
-        const newMessage = `This is help command`
+        });
+
+        author = interaction.user.id;
+        console.log(`User ${author} used /help command!`);
+
+        const newMessage = `can't help u lol.`
         await interaction.editReply({
             content: newMessage
         });
