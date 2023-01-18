@@ -66,63 +66,75 @@ module.exports = {
         console.log(`[logdata]Command /floorprice ${nftType} |  Params: { ${chain} , ${outputLimit} }`);
 
         // switch case for chain type
-        switch (chain) {
-            case 'bnb':
+        switch (nftType) {
+            case 'character':
                 try {
-                    result = await Sales.find({ nftType: nftType, blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
+                    result = await Sales.find({ nftType: "Character", blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
                     resLength = result.length;
+                    console.log(`[logdata] [\nResult count : ${resLength}\nResult data : \n${result}\n]`);
 
-                    for (let i = 0; i < resLength; i++) {
-                        nftData = await w3func.getCBCData(result[i].nftID, chain);
-                        link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
-                        container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
-                        newMessage += container + '\n';
+                    if (resLength < 1) {
+                        newMessage = `No records yet.`;
+                    } else {
+                        for (let i = 0; i < resLength; i++) {
+                            nftData = await w3func.getCBCData(result[i].nftID, chain);
+                            link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
+                            container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
+                            newMessage += container + '\n';
+                        }
                     }
                 } catch (error) {
-                    newMessage = `Command failed. <@${id}> fix your code.`
-                    console.log(`[logdata][logdata]Error in executing /floorprice command. \n${error}`)
+                    newMessage = `Command failed.`;
                 }
-
+                console.log(`[logdata]${newMessage}`);
                 await interaction.editReply({
                     content: newMessage
                 });
                 break;
-            case 'skale':
+            case 'weapon':
                 try {
-                    result = await Sales.find({ nftType: nftType, blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
+                    result = await Sales.find({ nftType: "Character", blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
                     resLength = result.length;
+                    console.log(`[logdata] [\nResult count : ${resLength}\nResult data : \n${result}\n]`);
 
-                    for (let i = 0; i < resLength; i++) {
-                        nftData = await w3func.getCBCData(result[i].nftID, chain);
-                        link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
-                        container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
-                        newMessage += container + '\n';
+                    if (resLength < 1) {
+                        newMessage = `No records yet.`;
+                    } else {
+                        for (let i = 0; i < resLength; i++) {
+                            nftData = await w3func.getCBWData(result[i].nftID, chain);
+                            link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
+                            container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
+                            newMessage += container + '\n';
+                        }
                     }
                 } catch (error) {
-                    newMessage = `Command failed. <@${id}> fix your code.`
-                    console.log(`[logdata][logdata]Error in executing /floorprice command. \n${error}`)
+                    newMessage = `Command failed.`;
                 }
-
+                console.log(`[logdata]${newMessage}`);
                 await interaction.editReply({
                     content: newMessage
                 });
                 break;
-            case 'oec':
+            case 'shield':
                 try {
-                    result = await Sales.find({ nftType: nftType, blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
+                    result = await Sales.find({ nftType: "Character", blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
                     resLength = result.length;
+                    console.log(`[logdata] [\nResult count : ${resLength}\nResult data : \n${result}\n]`);
 
-                    for (let i = 0; i < resLength; i++) {
-                        nftData = await w3func.getCBCData(result[i].nftID, chain);
-                        link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
-                        container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
-                        newMessage += container + '\n';
+                    if (resLength < 1) {
+                        newMessage = `No records yet.`;
+                    } else {
+                        for (let i = 0; i < resLength; i++) {
+                            nftData = await w3func.getCBSData(result[i].nftID, chain);
+                            link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
+                            container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
+                            newMessage += container + '\n';
+                        }
                     }
                 } catch (error) {
-                    newMessage = `Command failed. <@${id}> fix your code.`
-                    console.log(`[logdata][logdata]Error in executing /floorprice command. \n${error}`)
+                    newMessage = `Command failed.`;
                 }
-
+                console.log(`[logdata]${newMessage}`);
                 await interaction.editReply({
                     content: newMessage
                 });
