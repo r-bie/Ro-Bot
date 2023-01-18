@@ -51,7 +51,7 @@ module.exports = {
             fetchReply: true
         });
         let newMessage = ""; // bot's reply
-        let id = '1017975523412021268'; // bot author's id
+        let id = '98699085762031616'; // bot author's id
 
         // console log for slash command author
         author = interaction.user.id;
@@ -72,7 +72,7 @@ module.exports = {
                     result = await Sales.find({ nftType: nftType, blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
                     resLength = result.length;
 
-                    for (let i = 0; i < resultLength; i++) {
+                    for (let i = 0; i < resLength; i++) {
                         nftData = await w3func.getCBCData(result[i].nftID, chain);
                         link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
                         container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
@@ -92,7 +92,7 @@ module.exports = {
                     result = await Sales.find({ nftType: nftType, blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
                     resLength = result.length;
 
-                    for (let i = 0; i < resultLength; i++) {
+                    for (let i = 0; i < resLength; i++) {
                         nftData = await w3func.getCBCData(result[i].nftID, chain);
                         link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
                         container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
@@ -112,7 +112,7 @@ module.exports = {
                     result = await Sales.find({ nftType: nftType, blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
                     resLength = result.length;
 
-                    for (let i = 0; i < resultLength; i++) {
+                    for (let i = 0; i < resLength; i++) {
                         nftData = await w3func.getCBCData(result[i].nftID, chain);
                         link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
                         container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
