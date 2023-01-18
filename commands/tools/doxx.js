@@ -12,7 +12,7 @@ module.exports = {
         });
 
         var author = interaction.user.id;
-        console.log(`${author} used doxx command.`);
+        console.log(`[logdata]${author} used doxx command.`);
         
         var address = interaction.options.getString('owner');
         const balance = await w3func.getBalanceOf('bnb', address);

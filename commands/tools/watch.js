@@ -11,7 +11,7 @@ module.exports = {
         });
 
         var author = interaction.user.id;
-        console.log(`${author} used watch command.`);
+        console.log(`[logdata]${author} used watch command.`);
         
         const newMessage = `Now watching the Rewards Pool.`;
         w3func.getRewardsPoolBalance('bnb', client);

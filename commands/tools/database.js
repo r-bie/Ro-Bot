@@ -25,7 +25,7 @@ module.exports = {
             await interaction.reply({
                 content: `Guild ID: ${guildProfile.guildId}`
             });
-            console.log(`Guild ID: ${guildProfile.guildId} Already exist.`)
+            console.log(`[logdata]Guild ID: ${guildProfile.guildId} Already exist.`)
         }
     }
 }

@@ -79,7 +79,7 @@ module.exports = {
                         for (let i = 0; i < resLength; i++) {
                             nftData = await w3func.getCBCData(result[i].nftID, chain);
                             link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
-                            container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
+                            container = `**${chain.toUpperCase()} SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
                             newMessage += container + '\n';
                         }
                     }
@@ -93,7 +93,7 @@ module.exports = {
                 break;
             case 'weapon':
                 try {
-                    result = await Sales.find({ nftType: "Character", blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
+                    result = await Sales.find({ nftType: "Weapon", blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
                     resLength = result.length;
                     console.log(`[logdata] [\nResult count : ${resLength}\nResult data : \n${result}\n]`);
 
@@ -103,7 +103,7 @@ module.exports = {
                         for (let i = 0; i < resLength; i++) {
                             nftData = await w3func.getCBWData(result[i].nftID, chain);
                             link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
-                            container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
+                            container = `**${chain.toUpperCase()} SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
                             newMessage += container + '\n';
                         }
                     }
@@ -117,7 +117,7 @@ module.exports = {
                 break;
             case 'shield':
                 try {
-                    result = await Sales.find({ nftType: "Character", blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
+                    result = await Sales.find({ nftType: "Shield", blockchain: chain }).sort({ salesPrice: 1 }).limit(outputLimit);
                     resLength = result.length;
                     console.log(`[logdata] [\nResult count : ${resLength}\nResult data : \n${result}\n]`);
 
@@ -127,7 +127,7 @@ module.exports = {
                         for (let i = 0; i < resLength; i++) {
                             nftData = await w3func.getCBSData(result[i].nftID, chain);
                             link = `https://bazaar.market/buy/cb-${nftType.toLowerCase()}?id=${result[i].nftID}`;
-                            container = `**SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
+                            container = `**${chain.toUpperCase()} SKILL ${result[i].salesPrice}**  |  ${nftData}  |  ${link}`
                             newMessage += container + '\n';
                         }
                     }

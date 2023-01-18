@@ -150,6 +150,28 @@ async function getCBCData(nftID, chain) {
     return container;
 }
 
+async function getCharacterData(nftID, chain) {
+    // declaring web3 environment
+    const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
+
+    const contract = new web3.eth.Contract(charsABI, contractAddress[chain].character);
+    const getLevel = await contract.methods.getLevel(nftID).call({ from: USER_ADDRESS });
+    const getTrait = await contract.methods.getTrait(nftID).call({ from: USER_ADDRESS });
+
+    return [ getLevel, getTrait ];
+}
+
+async function getWeaponData(nftID, chain) {
+    // declaring web3 environment
+    const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
+
+    const contract = new web3.eth.Contract(weapABI, contractAddress[chain].weapon);
+    const getStars = await contract.methods.getStars(nftID).call({ from: USER_ADDRESS });
+    const getTrait = await contract.methods.getTrait(nftID).call({ from: USER_ADDRESS });
+
+    return [ getStars, getTrait ];
+}
+
 async function getCBWData(nftID, chain) {
     // declaring web3 environment
     const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
@@ -792,4 +814,4 @@ async function getAllPartner(chain, client) {
     }
 }
 
-module.exports = { isNumber, getCBCData, getCBWData, getCBSData, getNewListing, getListingPriceChange, getPurchasedListing, getCancelledListing, getRewardsPoolBalance, getBalanceOf, getAllPartner }
+module.exports = { isNumber, getCBCData, getCBWData, getCBSData, getNewListing, getListingPriceChange, getPurchasedListing, getCancelledListing, getRewardsPoolBalance, getBalanceOf, getAllPartner, getCharacterData, getWeaponData }
