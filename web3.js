@@ -134,6 +134,32 @@ function getStat3TraitWeap(statPattern) {
     return container;
 }
 
+async function getCharacterData(nftID, chain) {
+    // declaring web3 environment
+    const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
+
+    const contract = new web3.eth.Contract(charsABI, contractAddress[chain].character);
+    const x = await contract.methods.getLevel(nftID).call({ from: USER_ADDRESS });
+    const getTrait = await contract.methods.getTrait(nftID).call({ from: USER_ADDRESS });
+
+    const getLevel = Number(x) + 1;
+
+    return [getLevel, getTrait];
+}
+
+async function getWeaponData(nftID, chain) {
+    // declaring web3 environment
+    const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
+
+    const contract = new web3.eth.Contract(weapABI, contractAddress[chain].weapon);
+    const x = await contract.methods.getStars(nftID).call({ from: USER_ADDRESS });
+    const getTrait = await contract.methods.getTrait(nftID).call({ from: USER_ADDRESS });
+
+    const getStars = Number(x) + 1;
+
+    return [getStars, getTrait];
+}
+
 async function getCBCData(nftID, chain) {
     // declaring web3 environment
     const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
@@ -148,28 +174,6 @@ async function getCBCData(nftID, chain) {
     var y = parseInt(getLevel) + 1;
     var container = `${getClassFromTrait(getTrait)} ${nftID}  |  Lvl ${y}  |  ${getPower} Base Power  |  ${x} Bonus Power  |  ${getStamina} Stamina`;
     return container;
-}
-
-async function getCharacterData(nftID, chain) {
-    // declaring web3 environment
-    const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
-
-    const contract = new web3.eth.Contract(charsABI, contractAddress[chain].character);
-    const getLevel = await contract.methods.getLevel(nftID).call({ from: USER_ADDRESS });
-    const getTrait = await contract.methods.getTrait(nftID).call({ from: USER_ADDRESS });
-
-    return [ getLevel, getTrait ];
-}
-
-async function getWeaponData(nftID, chain) {
-    // declaring web3 environment
-    const web3 = new Web3(new Web3.providers.HttpProvider(nodes[chain]));
-
-    const contract = new web3.eth.Contract(weapABI, contractAddress[chain].weapon);
-    const getStars = await contract.methods.getStars(nftID).call({ from: USER_ADDRESS });
-    const getTrait = await contract.methods.getTrait(nftID).call({ from: USER_ADDRESS });
-
-    return [ getStars, getTrait ];
 }
 
 async function getCBWData(nftID, chain) {
@@ -260,6 +264,8 @@ async function getNewListing(currBlockNumber, chain, client) {
                     channel.send(bazaarString);
                 });
 
+            let [charLevel, charTrait] = await getCharacterData(arrayResponse[i].returnValues.nftID, chain);
+
             // saving into the database
             let salesProfile = await Sales.findOne({
                 blockchain: chain,
@@ -272,6 +278,10 @@ async function getNewListing(currBlockNumber, chain, client) {
                     blockNumber: currBlockNumber,
                     nftID: arrayResponse[i].returnValues.nftID,
                     nftType: x,
+                    charLevel: charLevel,
+                    charTrait: charTrait,
+                    weapStars: 'None',
+                    weapTrait: 'None',
                     salesType: 'List',
                     salesPrice: y,
                 });
@@ -294,6 +304,8 @@ async function getNewListing(currBlockNumber, chain, client) {
                     channel.send(bazaarString);
                 });
 
+            let [weapStars, weapTrait] = await getWeaponData(arrayResponse[i].returnValues.nftID, chain);
+
             // saving into the database
             let salesProfile = await Sales.findOne({
                 blockchain: chain,
@@ -307,6 +319,10 @@ async function getNewListing(currBlockNumber, chain, client) {
                     blockNumber: currBlockNumber,
                     nftID: arrayResponse[i].returnValues.nftID,
                     nftType: x,
+                    charLevel: 'None',
+                    charTrait: 'None',
+                    weapStars: weapStars,
+                    weapTrait: weapTrait,
                     salesType: 'List',
                     salesPrice: y,
                 });
@@ -329,6 +345,8 @@ async function getNewListing(currBlockNumber, chain, client) {
                     channel.send(bazaarString);
                 });
 
+            let [weapStars, weapTrait] = await getWeaponData(arrayResponse[i].returnValues.nftID, chain);
+
             // saving into the database
             let salesProfile = await Sales.findOne({
                 blockchain: chain,
@@ -342,6 +360,10 @@ async function getNewListing(currBlockNumber, chain, client) {
                     blockNumber: currBlockNumber,
                     nftID: arrayResponse[i].returnValues.nftID,
                     nftType: x,
+                    charLevel: 'None',
+                    charTrait: 'None',
+                    weapStars: weapStars,
+                    weapTrait: weapTrait,
                     salesType: 'List',
                     salesPrice: y,
                 });
@@ -397,6 +419,8 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
                     channel.send(bazaarString);
                 });
 
+            let [charLevel, charTrait] = await getCharacterData(arrayResponse[i].returnValues.nftID, chain);
+
             // update an item
             let salesProfile = await Sales.findOne({
                 blockchain: chain,
@@ -410,6 +434,10 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
                     blockNumber: currBlockNumber,
                     nftID: arrayResponse[i].returnValues.nftID,
                     nftType: x,
+                    charLevel: charLevel,
+                    charTrait: charTrait,
+                    weapStars: 'None',
+                    weapTrait: 'None',
                     salesType: 'List',
                     salesPrice: y,
                 });
@@ -420,10 +448,12 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
             } else {
                 await Sales.updateOne({
                     blockchain: chain,
-                    nftID: arrayResponse[i].returnValues.nftID},
-                    {$set:
-                        { salesPrice: y }
-                });
+                    nftID: arrayResponse[i].returnValues.nftID
+                },
+                    {
+                        $set:
+                            { salesPrice: y }
+                    });
                 console.log(`[logdata][MongoDB]Updated the price for [${x}, ${arrayResponse[i].returnValues.nftID}] to ${y}. ✅`);
             }
         } else if (x === "Weapon") { // fetch all required data for CBw
@@ -437,6 +467,8 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
                     channel.send(bazaarString);
                 });
 
+            let [weapStars, weapTrait] = await getWeaponData(arrayResponse[i].returnValues.nftID, chain);
+
             // update an item
             let salesProfile = await Sales.findOne({
                 blockchain: chain,
@@ -450,6 +482,10 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
                     blockNumber: currBlockNumber,
                     nftID: arrayResponse[i].returnValues.nftID,
                     nftType: x,
+                    charLevel: 'None',
+                    charTrait: 'None',
+                    weapStars: weapStars,
+                    weapTrait: weapTrait,
                     salesType: 'List',
                     salesPrice: y,
                 });
@@ -460,10 +496,12 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
             } else {
                 await Sales.updateOne({
                     blockchain: chain,
-                    nftID: arrayResponse[i].returnValues.nftID},
-                    {$set:
-                        { salesPrice: y }
-                });
+                    nftID: arrayResponse[i].returnValues.nftID
+                },
+                    {
+                        $set:
+                            { salesPrice: y }
+                    });
                 console.log(`[logdata][MongoDB]Updated the price for [${x}, ${arrayResponse[i].returnValues.nftID}] to ${y}. ✅`);
             }
         } else if (x === "Shield") { // fetch all required data for CBS
@@ -477,6 +515,8 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
                     channel.send(bazaarString);
                 });
 
+            let [weapStars, weapTrait] = await getWeaponData(arrayResponse[i].returnValues.nftID, chain);
+
             // update an item
             let salesProfile = await Sales.findOne({
                 blockchain: chain,
@@ -490,6 +530,10 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
                     blockNumber: currBlockNumber,
                     nftID: arrayResponse[i].returnValues.nftID,
                     nftType: x,
+                    charLevel: 'None',
+                    charTrait: 'None',
+                    weapStars: weapStars,
+                    weapTrait: weapTrait,
                     salesType: 'List',
                     salesPrice: y,
                 });
@@ -500,10 +544,12 @@ async function getListingPriceChange(currBlockNumber, chain, client) {
             } else {
                 await Sales.updateOne({
                     blockchain: chain,
-                    nftID: arrayResponse[i].returnValues.nftID},
-                    {$set:
-                        { salesPrice: y }
-                });
+                    nftID: arrayResponse[i].returnValues.nftID
+                },
+                    {
+                        $set:
+                            { salesPrice: y }
+                    });
                 console.log(`[logdata][MongoDB]Updated the price for [${x}, ${arrayResponse[i].returnValues.nftID}] to ${y}. ✅`);
             }
         } else {
