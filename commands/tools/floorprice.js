@@ -81,7 +81,6 @@ module.exports = {
             fetchReply: true
         });
         let newMessage = ""; // bot's reply
-        let id = '98699085762031616'; // bot author's id
 
         // console log for slash command author
         author = interaction.user.id;
@@ -109,7 +108,8 @@ module.exports = {
                             $gt: Number(level) - 10,
                             $lt: Number(level) + 10
                         },
-                        charTrait: trait
+                        charTrait: trait,
+                        salesType: 'List'
                     }).sort({ salesPrice: 1 }).limit(outputLimit);
 
                     console.log(`[logdata] [\nResult count : ${result.length}\nResult data : \n${result}\n]`);
@@ -138,7 +138,8 @@ module.exports = {
                         blockchain: chain,
                         nftType: "Weapon",
                         weapStars: stars,
-                        weapTrait: trait
+                        weapTrait: trait,
+                        salesType: 'List'
                      }).sort({ salesPrice: 1 }).limit(outputLimit);
 
                     console.log(`[logdata] [\nResult count : ${result.length}\nResult data : \n${result}\n]`);
@@ -167,7 +168,8 @@ module.exports = {
                         blockchain: chain,
                         nftType: "Shield",
                         weapStars: stars,
-                        weapTrait: trait
+                        weapTrait: trait,
+                        salesType: 'List'
                     }).sort({ salesPrice: 1 }).limit(outputLimit);
 
                     console.log(`[logdata] [\nResult count : ${result.length}\nResult data : \n${result}\n]`);

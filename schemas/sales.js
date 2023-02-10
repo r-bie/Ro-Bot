@@ -5,10 +5,12 @@ const salesSchema = new Schema({
     blockNumber: String,
     nftID: String,
     nftType: String,
-    charLevel: String,
+    charLevel: Number,
     charTrait: String,
     weapStars: String,
     weapTrait: String,
+    shieldStars: String,
+    shieldTrait: String,
     salesType: String,
     salesPrice: String,
 });
